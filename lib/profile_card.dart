@@ -16,19 +16,31 @@ class ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Hasil perhitungan formula NIM 20240801218:
-    // Digit terakhir = 8, Digit ke-2 dari belakang = 1, Dua digit terakhir = 18
+    // Ekstraksi digit NIM untuk formula otomatis (NIM: 20240801218)
+    final String cleanNim = nim.trim();
+    final int digitTerakhir = cleanNim.isNotEmpty
+        ? int.tryParse(cleanNim[cleanNim.length - 1]) ?? 0
+        : 0;
+    final int digitKe2Belakang = cleanNim.length >= 2
+        ? int.tryParse(cleanNim[cleanNim.length - 2]) ?? 0
+        : 0;
+
+    // Perhitungan Formula Sesuai Ketentuan Modul
     // Lebar Kartu    : 320.0 + (1 * 5)   = 325.0
     // Sudut Lengkung : 12.0 + (8 * 1.5)  = 24.0
     // Ukuran Logo    : 60.0 + (8 * 2)    = 76.0
     // Jarak Pemisah  : 15.0 + 8          = 23.0
+    final double cardWidth = 320.0 + (digitKe2Belakang * 5.0);
+    final double cardRadius = 12.0 + (digitTerakhir * 1.5);
+    final double logoSize = 60.0 + (digitTerakhir * 2.0);
+    final double spaceWidth = 15.0 + digitTerakhir;
 
     return Container(
-      width: 325.0,
+      width: cardWidth,
       padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24.0),
+        borderRadius: BorderRadius.circular(cardRadius),
         boxShadow: const [
           BoxShadow(
             color: Colors.black26,
@@ -41,19 +53,21 @@ class ProfileCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Kartu
+          // Bagian Header Kartu (Horizontal - Row)
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // Sisi Kiri: Logo Flutter berbingkai lengkung
               Container(
                 padding: const EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.0),
                   color: Colors.grey.shade100,
                 ),
-                child: const FlutterLogo(size: 76.0),
+                child: FlutterLogo(size: logoSize),
               ),
-              const SizedBox(width: 23.0),
+              SizedBox(width: spaceWidth),
+              // Sisi Kanan: Judul dan Nama Praktikan
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,9 +95,10 @@ class ProfileCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12.0),
+          // Pemisah
           const Divider(thickness: 1.5),
           const SizedBox(height: 12.0),
-          // Detail Identitas
+          // Bagian Detail Identitas (Vertikal - Column)
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -105,7 +120,10 @@ class ProfileCard extends StatelessWidget {
       children: [
         Text(
           label,
-          style: const TextStyle(fontSize: 14.0, color: Colors.black54),
+          style: const TextStyle(
+            fontSize: 14.0,
+            color: Colors.black54,
+          ),
         ),
         Text(
           value,
